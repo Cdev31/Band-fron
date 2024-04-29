@@ -1,62 +1,12 @@
-import { useState } from "react"
-import {  io } from "socket.io-client"
+import { useContext } from "react"
 import { AddBand } from "./Components/AddBands"
 import { BandList } from "./Components/BandList"
-import { useEffect } from "react"
-
-const connectSocketServer = ()=>{
-
-  const socket = io('http://localhost:3000', {
-    transports: ['websocket']
-  })
-  return socket
-
-}
+import { SocketContext } from "./Context/SocketContext"
+import { GraficBands } from "./Components/GraficBands"
 
 export const BandApp = ()=> {
 
-  const [ socket ] = useState( connectSocketServer() )
-  const [online, setOnline] = useState(false)
-  const [ bands, setBands ] = useState([])
-
-  useEffect(()=>{
-   
-    setOnline( socket.connected )
-  }, [ socket ])
-
-  useEffect(() =>{
-
-    socket.on('connect', ()=>{
-      setOnline(true)
-    })
-
-  }, [socket])
-
-  useEffect(() =>{
-
-    socket.on('disconnect', ()=>{
-      setOnline(false)
-    })
-
-  }, [socket])
-  
-  useEffect(()=>{
-    socket.on('current-bands', ( bands )=>{
-      setBands( bands )
-    })
-  }, [socket])
-
-  const voteBand = (id)=>{
-    socket.emit('vote-band', id)
-  }
-
-  const deleteBand = ( id )=>{
-    socket.emit('delete-band', id)
-  }
-
-  const changeName = ( id, name )=>{
-    socket.emit('change-name-band', { id, name })
-  }
+  const { online } = useContext(SocketContext)
 
   return (
     <div className="container">
@@ -73,12 +23,12 @@ export const BandApp = ()=> {
         <hr/>
         <div className="row">
           <div className="col-8">
-             <BandList
-              vote={voteBand}
-              deleteBand={deleteBand}
-              changeName={changeName}
-              data={bands}
-             />
+            <GraficBands/>
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-8">
+             <BandList/>
           </div>
           <div className="col-4">
               <AddBand/>

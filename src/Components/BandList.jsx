@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
+import { SocketContext } from "../Context/SocketContext"
 
 
 
-export const BandList = ({ data, vote, deleteBand, changeName })=> {
+export const BandList = ()=> {
 
+    const { bands:data, voteBand, deleteBand, changeName } = useContext( SocketContext )
     const [ bands, setBands ] = useState(data)
 
     useEffect(()=>{
@@ -30,7 +32,7 @@ export const BandList = ({ data, vote, deleteBand, changeName })=> {
             <tr key={band.id}>
                 <td>
                     <button 
-                    onClick={()=> vote(band.id)}
+                    onClick={()=> voteBand(band.id)}
                     className="btn btn-primary" >+1</button>
                 </td>
                 <td>
